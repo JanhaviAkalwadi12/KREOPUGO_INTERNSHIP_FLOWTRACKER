@@ -1,0 +1,269 @@
+
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #F5F6F8;
+    color: #293342;
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    width: 230px;
+    height: 100vh;
+    min-height: 100vh;
+    align-self: flex-start;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: #173D70;
+    color: white;
+    padding: 20px 15px;
+    flex-shrink: 0;
+}
+
+.brand {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 8px 22px;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 11px 13px;
+    margin: 5px 0;
+    border-radius: 8px;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: #781E12;
+}
+
+.menu-badge {
+    display: inline-block;
+    min-width: 19px;
+    padding: 2px 6px;
+    margin-left: 6px;
+    border-radius: 12px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+    padding: 22px 24px;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+h1 {
+    font-size: 26px;
+    margin: 0;
+    color: #173D70;
+}
+
+.muted {
+    color: #6B7280;
+    font-size: 13px;
+}
+
+.logout {
+    background: #781E12;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 7px;
+    text-decoration: none;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+    margin: 16px 0;
+}
+
+.card,
+.panel {
+    background: white;
+    border: 1px solid #E2E6EC;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.card strong {
+    display: block;
+    font-size: 28px;
+    color: #781E12;
+    margin-top: 10px;
+}
+
+.card .batch-value {
+    font-size: 20px;
+}
+
+.quick-heading {
+    font-size: 18px;
+    color: #173D70;
+}
+
+.quick {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 14px 0;
+}
+
+.quick a {
+    background: #fff;
+    border: 1px solid #E2E6EC;
+    border-radius: 10px;
+    padding: 13px 14px;
+    text-decoration: none;
+    color: #173D70;
+    font-weight: bold;
+    line-height: 1.4;
+}
+
+.quick a:hover {
+    border-color: #781E12;
+    color: #781E12;
+}
+
+.columns {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 14px;
+}
+
+.panel h2 {
+    font-size: 18px;
+    color: #781E12;
+    margin: 0 0 9px;
+}
+
+.item {
+    padding: 11px 0;
+    border-bottom: 1px solid #E2E6EC;
+}
+
+.item:last-child {
+    border-bottom: 0;
+}
+
+.item h3 {
+    font-size: 15px;
+    margin: 0 0 7px;
+}
+
+.item p {
+    margin: 6px 0;
+}
+
+.all-link {
+    margin-top: 15px;
+}
+
+.notification-heading {
+    margin-top: 22px !important;
+}
+
+.flash {
+    padding: 11px 14px;
+    border-radius: 8px;
+    background: #EAF1FA;
+    margin: 10px 0;
+}
+
+.flash.error {
+    background: #FBEAE6;
+    color: #781E12;
+}
+
+.flash.success {
+    background: #E7F5EA;
+    color: #216536;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 205px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .quick {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .layout {
+        display: block;
+    }
+
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+        padding: 14px;
+    }
+
+    .brand {
+        margin-bottom: 12px;
+    }
+
+    .sidebar nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3px;
+    }
+
+    .sidebar a {
+        margin: 2px 0;
+        padding: 10px 11px;
+        font-size: 13px;
+    }
+
+    .main {
+        padding: 17px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .quick {
+        grid-template-columns: 1fr 1fr;
+    }
+}

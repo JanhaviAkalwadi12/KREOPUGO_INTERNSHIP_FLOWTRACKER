@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='admin_notifications.css') }}">
+
+<h2>Notifications</h2>
+<p>Pending student activity that may need your attention.</p>
+
+<div class="notification-summary">
+
+    <div class="notification-count">
+        Pending submissions
+        <strong>{{ pending_submissions|length }}</strong>
+    </div>
+
+    <div class="notification-count">
+        Leave requests
+        <strong>{{ pending_leaves|length }}</strong>
+    </div>
+
+    <div class="notification-count">
+        Attendance requests
+        <strong>{{ pending_attendance|length }}</strong>
+    </div>
+
+</div>
+
+<!-- Assignment Submissions -->
+<div class="notification-group">
+
+    <h3>Assignment Submissions</h3>
+
+    {% for item in pending_submissions %}
+
+    <article class="notification-entry">
+
+        <strong>{{ item['title'] or 'Assignment' }}</strong>
+
+        <p>
+            Student:
+            {{ item['student_name'] or item['student_id'] }}
+            ({{ item['student_id'] }})
+        </p>
+
+        <p>File: {{ item['file_name'] or 'Submitted file' }}</p>
+
+        <p class="muted">{{ item['submitted_at'] or '' }}</p>
+
+        <a class="btn" href="{{ url_for('admin_requests') }}">
+            Review submissions
+        </a>
+
+    </article>
+
+    {% else %}
+
+    <p>No pending assignment submissions.</p>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- Leave Requests -->
+<div class="notification-group">
+
+    <h3>Leave Requests</h3>
+
+    {% for item in pending_leaves %}
+
+    <article class="notification-entry">
+
+        <strong>
+            {{ item['student_name'] or item['student_id'] }}
+        </strong>
+
+        <p>{{ item['start_date'] }} to {{ item['end_date'] }}</p>
+
+        <p>{{ item['reason'] }}</p>
+
+        <p class="muted">{{ item['created_at'] or '' }}</p>
+
+        <a class="btn" href="{{ url_for('admin_requests') }}">
+            Review requests
+        </a>
+
+    </article>
+
+    {% else %}
+
+    <p>No pending leave requests.</p>
+
+    {% endfor %}
+
+</div>
+
+
+<!-- Attendance Requests -->
+<div class="notification-group">
+
+    <h3>Attendance Requests</h3>
+
+    {% for item in pending_attendance %}
+
+    <article class="notification-entry">
+
+        <strong>
+            {{ item['student_name'] or item['student_id'] }}
+        </strong>
+
+        <p>
+            {{ item['attendance_date'] }}
+            ·
+            {{ item['attendance_type'] }}
+        </p>
+
+        <p>{{ item['reason'] }}</p>
+
+        <p class="muted">{{ item['created_at'] or '' }}</p>
+
+        <a class="btn" href="{{ url_for('admin_requests') }}">
+            Review attendance
+        </a>
+
+    </article>
+
+    {% else %}
+
+    <p>No pending attendance requests.</p>
+
+    {% endfor %}
+
+</div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+
+.attendance-page h2 {
+    color: #781E12;
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.muted {
+    color: #6B7280;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+#attendanceForm {
+    background: #FFFFFF;
+    border: 1px solid #E2E6EC;
+    border-radius: 12px;
+    padding: 22px;
+    margin-top: 18px;
+}
+
+#attendanceForm label {
+    display: block;
+    font-weight: 600;
+    color: #344054;
+    margin: 15px 0 8px;
+}
+
+#attendanceForm input[type="date"] {
+    width: 100%;
+    max-width: 420px;
+    padding: 11px 12px;
+    border: 1px solid #DCE1E8;
+    border-radius: 8px;
+    font: inherit;
+    color: #293342;
+    background: #F7F8FA;
+}
+
+.camera-preview {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    min-height: 220px;
+    background: #111111;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-top: 8px;
+}
+
+#photoCanvas {
+    display: none;
+}
+
+.attendance-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.attendance-buttons button,
+.submit-attendance {
+    border: 0;
+    border-radius: 8px;
+    padding: 11px 17px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+#startCamera {
+    background: #173D70;
+    color: #FFFFFF;
+}
+
+#capturePhoto {
+    background: #EEF1F5;
+    color: #344054;
+}
+
+.submit-attendance {
+    background: #781E12;
+    color: #FFFFFF;
+    margin-top: 12px;
+}
+
+.attendance-buttons button:hover,
+.submit-attendance:hover {
+    opacity: 0.9;
+}
+
+#cameraStatus,
+#locationStatus {
+    margin: 10px 0;
+}
+
+.history-heading {
+    margin-top: 26px !important;
+}
+
+.attendance-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: #FFFFFF;
+    border: 1px solid #E2E6EC;
+    border-radius: 10px;
+    margin-top: 12px;
+}
+
+.attendance-table {
+    width: 100%;
+    min-width: 550px;
+    border-collapse: collapse;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 13px 14px;
+    text-align: left;
+    border-bottom: 1px solid #E2E6EC;
+    font-size: 14px;
+}
+
+.attendance-table th {
+    background: #F5F6F8;
+    color: #173D70;
+    font-weight: 700;
+}
+
+.attendance-table tr:last-child td {
+    border-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    #attendanceForm {
+        padding: 15px;
+    }
+
+    .camera-preview {
+        max-width: 100%;
+        min-height: 190px;
+    }
+
+    .attendance-buttons {
+        flex-direction: column;
+    }
+
+    .attendance-buttons button,
+    .submit-attendance {
+        width: 100%;
+    }
+}

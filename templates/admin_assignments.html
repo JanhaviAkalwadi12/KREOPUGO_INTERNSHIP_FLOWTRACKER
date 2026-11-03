@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='admin_assignments.css') }}">
+
+<div class="assignment-toolbar">
+    <div>
+        <h2>Assignments</h2>
+        <p class="muted">
+            Review work directly here. Click a student name to expand their details.
+        </p>
+    </div>
+
+    <span class="status-pill pending">
+        {{ pending_submissions }} pending review
+    </span>
+</div>
+
+<!-- Create Assignment -->
+<details class="create-assignment">
+    <summary>＋ Create new mentor assignment</summary>
+
+    <form method="POST"
+          action="{{ url_for('admin_assignments') }}"
+          enctype="multipart/form-data">
+
+        <div class="create-grid">
+
+            <div>
+                <label>Assignment Title</label>
+                <input name="title" maxlength="200" required>
+            </div>
+
+            <div>
+                <label>Batch</label>
+                <select name="batch" required>
+                    <option value="">Select batch</option>
+                    <option value="All">All batches</option>
+
+                    {% for b in batches %}
+                        <option value="{{ b['batch_name'] }}">
+                            {{ b['batch_name'] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Deadline (date and time)</label>
+                <input name="due_date"
+                       type="datetime-local"
+                       required>
+            </div>
+
+            <div>
+                <label>Instruction attachment (optional)</label>
+                <input type="file"
+                       name="assignment_file"
+                       accept=".pdf,.doc,.docx,.txt,.zip,.jpg,.jpeg,.png">
+            </div>
+
+        </div>
+
+        <label>Instructions</label>
+        <textarea name="description" rows="2" required></textarea>
+
+        <p class="muted">
+            Allowed attachments: PDF, DOC, DOCX, TXT, ZIP, JPG, PNG.
+            Maximum 2 MB per file.
+        </p>
+
+        <button type="submit">Publish Assignment</button>
+
+    </form>
+</details>
+
+
+<!-- Assignment Cards -->
+<div class="assignment-list">
+
+    {% for group in assignment_groups %}
+
+        {% set a = group['assignment'] %}
+
+        <article class="assignment-card">
+
+            <h3>{{ a['title'] }}</h3>
+
+            <p>{{ a['description'] }}</p>
+
+            <p class="assignment-meta">
+                Batch: {{ a['batch'] }}
+                ·
+                Due: {{ (a['due_date'] or 'Not specified')|replace('T', ' ') }}
+            </p>
+
+            {% if a['attachment_name'] %}
+                <p class="assignment-meta">
+                    Instruction file: {{ a['attachment_name'] }}
+                </p>
+            {% endif %}
+
+            <div class="assignment-actions">
+                <a class="btn"
+                   href="{{ url_for('edit_assignment', assignment_id=a['id']) }}">
+                    Edit assignment
+                </a>
+            </div>
+
+            <div class="submissions-head">
+                <h4>
+                    Student submissions ({{ group['submissions']|length }})
+                </h4>
+            </div>
+
+            {% for sub in group['submissions'] %}
+
+                <details class="submission-row"
+                         id="submission-{{ sub['id'] }}">
+
+                    <summary class="student-summary">
+
+                        <div>
+                            <div class="student-name">
+                                {{ sub['student_name'] or sub['student_id'] }}
+                            </div>
+
+                            <div class="student-small">
+                                ID: {{ sub['student_id'] }}
+                                ·
+                                {{ sub['submitted_at'] or 'Time unavailable' }}
+                            </div>
+                        </div>
+
+                        <span class="status-pill
+                            {% if sub['status'] == 'Approved' %}
+                                approved
+                            {% elif sub['status'] == 'Rejected' %}
+                                rejected
+                            {% else %}
+                                pending
+                            {% endif %}">
+
+                            {{ sub['status'] or 'Pending Review' }}
+
+                        </span>
+
+                    </summary>
+
+                    <div class="inline-review">
+
+                        <p>
+                            <strong>Assignment:</strong>
+                            {{ a['title'] }}
+                        </p>
+
+                        <p>
+                            <strong>Student:</strong>
+                            {{ sub['student_name'] or sub['student_id'] }}
+                            ({{ sub['student_id'] }})
+                        </p>
+
+                        <p>
+                            <strong>Submitted:</strong>
+                            {{ sub['submitted_at'] or 'Time unavailable' }}
+                        </p>
+
+                        <p>
+                            <strong>File:</strong>
+                            {{ sub['file_name'] or 'No filename recorded' }}
+                        </p>
+
+                        {% if sub['admin_feedback'] %}
+                            <p>
+                                <strong>Feedback:</strong>
+                                {{ sub['admin_feedback'] }}
+                            </p>
+                        {% endif %}
+
+                        <p>
+                            <a class="btn compact-btn"
+                               href="{{ url_for('download_submission', submission_id=sub['id']) }}">
+                                Download file
+                            </a>
+                        </p>
+
+                        {% if sub['status'] not in ['Approved', 'Rejected'] %}
+
+                            <form method="POST"
+                                  action="{{ url_for('admin_assignments') }}"
+                                  class="inline-buttons"
+                                  data-confirm-review>
+
+                                <input type="hidden"
+                                       name="action"
+                                       value="review_submission">
+
+                                <input type="hidden"
+                                       name="submission_id"
+                                       value="{{ sub['id'] }}">
+
+                                <button class="approve"
+                                        type="submit"
+                                        name="decision"
+                                        value="Approved">
+                                    ✓ Approve
+                                </button>
+
+                                <button class="reject"
+                                        type="submit"
+                                        name="decision"
+                                        value="Rejected">
+                                    ✕ Reject
+                                </button>
+
+                            </form>
+
+                        {% else %}
+
+                            <p class="student-small">
+                                This submission has already been reviewed.
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </details>
+
+            {% else %}
+
+                <p class="empty-submissions">
+                    No student submissions yet.
+                </p>
+
+            {% endfor %}
+
+        </article>
+
+    {% else %}
+
+        <p>No assignments published yet.</p>
+
+    {% endfor %}
+
+</div>
+
+<p class="other-approvals">
+    <a class="btn secondary" href="{{ url_for('admin_requests') }}">
+        Other Approvals: Leave &amp; Attendance
+    </a>
+</p>
+
+<script src="{{ url_for('static', filename='admin_assignments.js') }}"
+        defer></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='batch_management.css') }}">
+
+<h2>Create Batch</h2>
+
+<form method="POST" action="{{ url_for('batch_management') }}">
+    <input type="hidden" name="action" value="create_batch">
+
+    <div class="batch-form-grid">
+
+        <div>
+            <label>College</label>
+            <input type="text" name="college" maxlength="150" required>
+        </div>
+
+        <div>
+            <label>Course</label>
+            <select name="course" id="batch_course" required>
+                <option value="">Select course</option>
+                {% for course in courses %}
+                    <option value="{{ course }}">{{ course }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Academic Year</label>
+            <select name="academic_year" id="academic_year" required>
+                <option value="">Select year</option>
+                {% for year in years %}
+                    <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Section</label>
+            <select name="section" id="section" required>
+                <option value="">Select section</option>
+                {% for sec in sections %}
+                    <option value="{{ sec }}">{{ sec }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Batch Name (Generated)</label>
+            <input type="text"
+                   name="batch_name"
+                   id="batch_name"
+                   readonly
+                   required
+                   placeholder="Select course, year and section">
+        </div>
+
+        <div>
+            <label>Capacity (Minimum 30)</label>
+            <input type="number"
+                   name="capacity"
+                   min="30"
+                   value="30"
+                   required>
+        </div>
+
+    </div>
+
+    <p class="batch-submit">
+        <button type="submit">Create Batch</button>
+    </p>
+</form>
+
+<p class="batch-note">
+    Students register through Student Signup.
+    Registered students appear below and can be opened to view their details.
+</p>
+
+<hr class="batch-divider">
+
+<!-- Existing Batches -->
+
+<h2>Existing Batches</h2>
+
+<div class="table-wrap">
+    <table class="batch-table">
+        <thead>
+            <tr>
+                <th>Batch</th>
+                <th>College</th>
+                <th>Course</th>
+                <th>Academic Year</th>
+                <th>Section</th>
+                <th>Capacity</th>
+                <th>Students</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for b in batches %}
+            <tr>
+                <td>{{ b['batch_name'] }}</td>
+                <td>{{ b['college'] }}</td>
+                <td>{{ b['course'] }}</td>
+                <td>{{ b['academic_year'] }}</td>
+                <td>{{ b['section'] }}</td>
+                <td>{{ b['capacity'] }}</td>
+                <td>{{ b['student_count'] }}</td>
+            </tr>
+
+            {% else %}
+            <tr>
+                <td colspan="7">No batches created yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Recently Added Students -->
+
+<h2 class="recent-students-heading">Recently Added Students</h2>
+
+<div class="table-wrap">
+    <table class="batch-table">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Course</th>
+                <th>Batch</th>
+                <th>College</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for s in recent_students %}
+            <tr>
+                <td>{{ s['student_id'] }}</td>
+
+                <td>
+                    <a href="{{ url_for(
+                        'staff_student_detail',
+                        student_id=s['student_id']
+                    ) }}">
+                        {{ s['name'] }}
+                    </a>
+                </td>
+
+                <td>{{ s['email'] }}</td>
+                <td>{{ s['course'] or '-' }}</td>
+                <td>{{ s['batch'] or '-' }}</td>
+                <td>{{ s['college'] or '-' }}</td>
+            </tr>
+
+            {% else %}
+            <tr>
+                <td colspan="6">No students added yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="{{ url_for('static', filename='batch_management.js') }}" defer></script>
+</body>
+</html>

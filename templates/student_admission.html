@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Records | KreoPugo</title>
+<link rel="stylesheet"
+          href="{{ url_for('static', filename='student_admission.css') }}">
+
+    <script src="{{ url_for('static', filename='student_admisiion.js') }}" defer></script>
+
+</head>
+
+<body>
+
+<header>
+    <h1>Student Records</h1>
+</header>
+
+<main>
+
+    <a class="button" href="{{ url_for('admin_dashboard') }}">
+        ← Dashboard
+    </a>
+
+    <a class="button" href="{{ url_for('batch_management') }}">
+        Manage Batches
+    </a>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <section class="panel">
+        <h2>Student Information</h2>
+
+        <p class="note">
+            Students enter their details through the signup page.
+            Their records appear here automatically. Only an authenticated
+            administrator can edit these details.
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>College</th>
+                        <th>Course</th>
+                        <th>Batch</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.get('student_id', '') }}</td>
+                        <td>{{ student.get('name', '') }}</td>
+                        <td>{{ student.get('email', '') }}</td>
+                        <td>{{ student.get('mobile', '') }}</td>
+                        <td>{{ student.get('college', '') }}</td>
+                        <td>{{ student.get('course', '') }}</td>
+                        <td>{{ student.get('batch', '') }}</td>
+
+                        <td>
+                            {% if student.get('registered') %}
+                                <span class="status">Registered</span>
+                            {% else %}
+                                <span class="status">Pending Signup</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a class="button edit"
+                               href="{{ url_for('admin_edit_student', student_id=student.get('student_id', '')) }}">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="empty">
+                            No student records found yet.
+                            Students will appear here after signing up.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

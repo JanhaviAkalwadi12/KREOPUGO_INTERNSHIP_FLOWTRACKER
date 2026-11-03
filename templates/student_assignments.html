@@ -1,0 +1,647 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Assignments | KreoPugo</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #F5F6F8;
+            color: #222222;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 245px;
+            background: #65452F;
+            color: #FFFFFF;
+            padding: 25px 16px;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            text-align: center;
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .brand-subtitle {
+            text-align: center;
+            color: #E3CBB5;
+            font-size: 12px;
+            margin-bottom: 35px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            color: #E3CBB5;
+            margin: 20px 10px 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #956B4B;
+        }
+
+        .menu-icon {
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        /* MAIN AREA */
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topbar {
+            min-height: 75px;
+            background: #FFFFFF;
+            padding: 15px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-bottom: 3px solid #E3CBB5;
+        }
+
+        .topbar h2 {
+            color: #65452F;
+            font-size: 21px;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #3674C6;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .logout {
+            color: #3674C6;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .logout:hover {
+            color: #173D78;
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h1 {
+            color: #65452F;
+            font-size: 28px;
+            margin-bottom: 9px;
+        }
+
+        .welcome p {
+            color: #666666;
+            line-height: 1.6;
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-block;
+            border: none;
+            border-radius: 7px;
+            padding: 11px 16px;
+            background: #3674C6;
+            color: #FFFFFF;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #173D78;
+        }
+
+        .btn-secondary {
+            background: #65452F;
+        }
+
+        .btn-secondary:hover {
+            background: #956B4B;
+        }
+
+        /* SUMMARY CARDS */
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .summary-card {
+            background: #FFFFFF;
+            padding: 22px;
+            border-radius: 12px;
+            border-left: 4px solid #3674C6;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-card p {
+            color: #666666;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .summary-card h2 {
+            color: #173D78;
+            font-size: 28px;
+        }
+
+        /* ASSIGNMENTS PANEL */
+        .panel {
+            background: #FFFFFF;
+            padding: 23px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .panel-header h2 {
+            color: #65452F;
+            font-size: 20px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 10px 12px;
+            border: 1px solid #D5D5D5;
+            border-radius: 7px;
+            font-size: 13px;
+            background: #FFFFFF;
+        }
+
+        .filters input {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            min-width: 700px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #EEEEEE;
+            font-size: 13px;
+        }
+
+        th {
+            background: #65452F;
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+
+        td {
+            color: #333333;
+        }
+
+        tbody tr:hover {
+            background: #F5EEE8;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            background: #EAF1FB;
+            color: #173D78;
+        }
+
+        .status.completed,
+        .status.approved {
+            background: #E5F3EC;
+            color: #286747;
+        }
+
+        .status.pending {
+            background: #FFF1D8;
+            color: #8A5B0A;
+        }
+
+        .status.rejected {
+            background: #FCE8E6;
+            color: #A12622;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 35px 15px;
+            color: #777777;
+        }
+
+        .empty-message p {
+            margin: 8px 0 17px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #777777;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 190px;
+            }
+
+            .summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        button[type="submit"] {
+    background: #65452F;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background: #956b4b;
+}
+        @media (max-width: 650px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 16px;
+            }
+
+            .brand-subtitle {
+                margin-bottom: 15px;
+            }
+
+            .menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            .section-label {
+                display: none;
+            }
+
+            .menu a {
+                padding: 10px;
+            }
+
+            .topbar {
+                padding: 14px 16px;
+            }
+
+            .topbar h2 {
+                font-size: 17px;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">KreoPugo</div>
+        <div class="brand-subtitle">Flow Tracker</div>
+
+        <nav class="menu">
+            <div class="section-label">Student Menu</div>
+
+            <a href="{{ url_for('student_dashboard') }}">
+                <span class="menu-icon">⌂</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('student_assignments') }}" class="active">
+                <span class="menu-icon">▣</span>
+                <span>My Assignments</span>
+            </a>
+
+            <a href="{{ url_for('student_announcements') }}">
+                <span class="menu-icon">♧</span>
+                <span>Announcements</span>
+            </a>
+
+            <a href="{{ url_for('student_notifications') }}">
+                <span class="menu-icon">♢</span>
+                <span>Notifications</span>
+            </a>
+
+            <a href="{{ url_for('student_calendar') }}">
+                <span class="menu-icon">▦</span>
+                <span>Calendar</span>
+            </a>
+
+            <a href="{{ url_for('student_submissions') }}">
+                <span class="menu-icon">✓</span>
+                <span>Submissions</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <header class="topbar">
+            <h2>My Assignments</h2>
+
+            <div class="student-info">
+                <div class="avatar">S</div>
+                <div>
+                    <strong>{{ session.get('name', 'Student') }}</strong><br>
+                    <small>Student Portal</small>
+                </div>
+
+                <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+            </div>
+        </header>
+
+        <section class="content">
+
+            <div class="welcome">
+                <h1>My Assignments</h1>
+                <p>
+                    View your assignments, track deadlines, and check the
+                    approval status of assignments you propose.
+                </p>
+                <br>
+            </div>
+
+            <!-- SUMMARY -->
+            {% set assignment_list = assignments|default([], true) %}
+            {% set total_assignments = assignment_list|length %}
+            {% set completed_count = namespace(value=0) %}
+            {% set pending_count = namespace(value=0) %}
+
+            {% for assignment in assignment_list %}
+                {% set current_status = assignment.get('status', 'Pending') if assignment is mapping else assignment.status|default('Pending') %}
+
+                {% if current_status|lower == 'completed' %}
+                    {% set completed_count.value = completed_count.value + 1 %}
+                {% endif %}
+
+                {% if current_status|lower in ['pending', 'pending mentor review', 'in progress'] %}
+                    {% set pending_count.value = pending_count.value + 1 %}
+                {% endif %}
+            {% endfor %}
+
+            <div class="summary">
+                <div class="summary-card">
+                    <p>Total Assignments</p>
+                    <h2>{{ total_assignments }}</h2>
+                </div>
+
+                <div class="summary-card">
+                    <p>Completed</p>
+                    <h2>{{ completed_count.value }}</h2>
+                </div>
+
+                <div class="summary-card">
+                    <p>Pending / In Progress</p>
+                    <h2>{{ pending_count.value }}</h2>
+                </div>
+            </div>
+
+            <!-- ASSIGNMENT LIST -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Assignment List</h2>
+                </div>
+
+                <div class="filters">
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Search assignments..."
+                        aria-label="Search assignments">
+
+                    <select id="statusFilter" aria-label="Filter by status">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="pending mentor review">
+                            Pending Mentor Review
+                        </option>
+                        <option value="in progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+
+                <div class="table-wrapper">
+                    <table id="assignmentsTable">
+                        <thead>
+                            <tr>
+                                <th>Assignment Title</th>
+                                <th>Type</th>
+                                <th>Deadline</th>
+                                <th>Status</th>
+                                <th>Mentor Approval</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for assignment in assignment_list %}
+                            {% set title = assignment.get('title', assignment.get('name', 'Untitled')) if assignment is mapping else assignment.title|default('Untitled') %}
+                            {% set assignment_type = assignment.get('assignment_type', 'General') if assignment is mapping else assignment.assignment_type|default('General') %}
+                            {% set deadline = assignment.get('deadline', 'Not set') if assignment is mapping else assignment.deadline|default('Not set') %}
+                            {% set status = assignment.get('status', 'Pending') if assignment is mapping else assignment.status|default('Pending') %}
+                            {% set approval = assignment.get('mentor_approval', 'Not required') if assignment is mapping else assignment.mentor_approval|default('Not required') %}
+
+                            <tr class="assignment-row">
+                                <td>{{ title }}</td>
+                                <td>{{ assignment_type }}</td>
+                                <td>{{ deadline }}</td>
+                                <td>
+                                    <span class="status
+                                        {% if status|lower == 'completed' %}completed
+                                        {% elif status|lower == 'rejected' %}rejected
+                                        {% elif status|lower in ['pending', 'pending mentor review'] %}pending
+                                        {% endif %}">
+                                        {{ status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status
+                                        {% if approval|lower == 'approved' %}approved
+                                        {% elif approval|lower == 'rejected' %}rejected
+                                        {% elif approval|lower == 'pending' %}pending
+                                        {% endif %}">
+                                        {{ approval }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr id="emptyRow">
+                                <td colspan="5" class="empty-message">
+                                    <strong>No assignments yet</strong>
+                                    <p>
+                                        Your assignments will appear here when
+                                        they are available.
+                                    </p>
+                                    <a class="btn"
+                                       href="{{ url_for('student_create_assignment') }}">
+                                        Propose an Assignment
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                            <tr id="noResults" style="display: none;">
+                                <td colspan="5" class="empty-message">
+                                    No assignments match your search.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="footer">
+                © KreoPugo Flow Tracker | Student Portal
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<script>
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+    const rows = document.querySelectorAll(".assignment-row");
+    const noResults = document.getElementById("noResults");
+
+    function filterAssignments() {
+        const searchText = searchInput.value.toLowerCase().trim();
+        const selectedStatus = statusFilter.value.toLowerCase();
+        let visibleCount = 0;
+
+        rows.forEach(function (row) {
+            const rowText = row.innerText.toLowerCase();
+            const rowStatus = row.cells[3].innerText.toLowerCase().trim();
+
+            const matchesSearch = rowText.includes(searchText);
+            const matchesStatus =
+                !selectedStatus || rowStatus === selectedStatus;
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = "";
+                visibleCount++;
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        if (noResults) {
+            noResults.style.display =
+                rows.length > 0 && visibleCount === 0 ? "" : "none";
+        }
+    }
+
+    searchInput.addEventListener("input", filterAssignments);
+    statusFilter.addEventListener("change", filterAssignments);
+</script>
+
+</body>
+</html>

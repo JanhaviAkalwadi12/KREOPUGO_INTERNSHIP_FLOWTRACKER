@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename='student_attendance.css') }}">
+
+<script src="{{ url_for('static', filename='student_attendance.js') }}" defer></script>
+</head>
+<body>
+    
+<h2>Camera & Location Attendance</h2>
+
+<p class="muted">
+    Allow camera and location access. Your attendance will remain pending
+    until an administrator reviews it. Location accuracy depends on your
+    device and browser; it is not foolproof proof of physical presence.
+</p>
+
+<form method="post" id="attendanceForm">
+
+    <label for="attendanceDate">Date</label>
+    <input
+        type="date"
+        id="attendanceDate"
+        name="attendance_date"
+        required
+        value="{{ today }}"
+    >
+
+    <label>Camera Photo</label>
+
+    <video
+        id="cameraPreview"
+        autoplay
+        playsinline
+        class="camera-preview">
+    </video>
+
+    <canvas id="photoCanvas" hidden></canvas>
+
+    <input
+        type="hidden"
+        name="camera_photo"
+        id="cameraPhoto"
+    >
+
+    <div class="attendance-buttons">
+        <button type="button" id="startCamera">
+            Start Camera
+        </button>
+
+        <button type="button" id="capturePhoto">
+            Capture Photo
+        </button>
+    </div>
+
+    <p id="cameraStatus" class="muted">
+        Camera not started.
+    </p>
+
+    <input type="hidden" name="latitude" id="latitude">
+    <input type="hidden" name="longitude" id="longitude">
+
+    <p id="locationStatus" class="muted">
+        Location not captured.
+    </p>
+
+    <button type="submit" class="submit-attendance">
+        Submit Attendance for Approval
+    </button>
+
+</form>
+
+<h2 class="history-heading">Attendance History</h2>
+
+<div class="attendance-table-wrapper">
+    <table class="attendance-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Review</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for r in rows %}
+            <tr>
+                <td>{{ r['attendance_date'] }}</td>
+
+                <td>{{ r['attendance_type'] }}</td>
+
+                <td>
+                    {{ r['status'] }}
+
+                    {% if r['admin_feedback'] %}
+                        <br>
+                        {{ r['admin_feedback'] }}
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if r['latitude'] and r['longitude'] %}
+                        Captured
+                    {% else %}
+                        Not available
+                    {% endif %}
+                </td>
+            </tr>
+
+            {% else %}
+            <tr>
+                <td colspan="4">No attendance entries yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>Non-Technical Head Dashboard | KREOPUGO</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='non-technical.css') }}">
+
+    <script src="{{ url_for('static', filename='non-technical.js') }}"
+            defer></script>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">KREOPUGO</div>
+
+        <nav class="nav">
+
+            <a class="active"
+               href="{{ url_for('nontechnical_dashboard') }}">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('admin_batches') }}">
+                Batch Management
+            </a>
+
+            <a href="{{ url_for('admin_announcements') }}">
+                Announcements
+            </a>
+
+            <a href="{{ url_for('admin_requests') }}">
+                Attendance & Leave Requests
+
+                {% if pending_leaves %}
+                    <span class="menu-badge">
+                        {{ pending_leaves }}
+                    </span>
+                {% endif %}
+            </a>
+
+            <a href="{{ url_for('admin_reports') }}">
+                Reports
+            </a>
+
+            
+        </nav>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <div class="topbar">
+
+            <div>
+                <h1>Non-Technical Head Dashboard</h1>
+
+                <div class="sub">
+                    Welcome back. Here is your latest overview.
+                </div>
+            </div>
+
+            <a class="btn"
+               href="{{ url_for('logout') }}"
+               data-confirm-logout>
+                Logout
+            </a>
+
+        </div>
+
+        <!-- DASHBOARD CARDS -->
+        <section class="stats">
+
+            <div class="card">
+                <div class="label">Total Students</div>
+                <strong>{{ total_students }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Total Batches</div>
+                <strong>{{ total_batches }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Announcements</div>
+                <strong>{{ total_announcements }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Pending Leave Requests</div>
+                <strong>{{ pending_leaves }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Attendance Records</div>
+                <strong>{{ total_attendance }}</strong>
+            </div>
+
+        </section>
+
+        <!-- QUICK ACTIONS -->
+        <section class="quick">
+
+            <h2 class="section-title">
+                Quick Actions
+            </h2>
+
+            <div class="quick-grid">
+
+                <a href="{{ url_for('admin_batches') }}">
+                    Manage Batches
+                </a>
+
+                <a href="{{ url_for('admin_announcements') }}">
+                    Post Announcement
+                </a>
+
+                <a href="{{ url_for('admin_requests') }}">
+                    Review Requests
+                </a>
+
+                <a href="{{ url_for('admin_reports') }}">
+                    View Reports
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="content-grid">
+
+            <!-- RECENT STUDENTS -->
+            <section class="panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <h2>Recently Registered Students</h2>
+                    </div>
+                </div>
+
+                {% for s in recent_students %}
+
+                    <article class="item">
+
+                        <strong>
+                            <a href="{{ url_for('staff_student_detail', student_id=s['student_id']) }}">
+                                {{ s['name'] }}
+                            </a>
+                        </strong>
+
+                        <p>
+                            {{ s['student_id'] }}
+                            ·
+                            {{ s['email'] }}
+                        </p>
+
+                        <p class="muted">
+                            {{ s['college'] or 'College not set' }}
+                            ·
+                            {{ s['course'] or 'Course not set' }}
+                            ·
+                            Batch: {{ s['batch'] or 'Not assigned' }}
+                        </p>
+
+                    </article>
+
+                {% else %}
+
+                    <p class="empty-state">
+                        No students registered yet.
+                    </p>
+
+                {% endfor %}
+
+            </section>
+
+            <!-- RECENT LEAVE REQUESTS -->
+            <section class="panel">
+
+                <div class="panel-heading">
+                    <div>
+        
+                        <h2>Recent Leave Requests</h2>
+                    </div>
+                </div>
+
+                {% for r in recent_leaves %}
+
+                    <article class="item">
+
+                        <strong>
+                            <a href="{{ url_for('staff_student_detail', student_id=r['student_id']) }}">
+                                {{ r['student_name'] }}
+                            </a>
+                        </strong>
+
+                        <p>
+                            {{ r['start_date'] }}
+                            to
+                            {{ r['end_date'] }}
+                        </p>
+
+                        <p>
+                            Status:
+                            <span class="pill">
+                                {{ r['status'] }}
+                            </span>
+                        </p>
+
+                        <p class="muted">
+                            {{ r['created_at'] or '' }}
+                        </p>
+
+                    </article>
+
+                {% else %}
+
+                    <p class="empty-state">
+                        No leave requests yet.
+                    </p>
+
+                {% endfor %}
+
+            </section>
+
+            <!-- RECENT ATTENDANCE -->
+            <section class="panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <h2>Recent Attendance</h2>
+                    </div>
+                </div>
+
+                {% for a in recent_attendance %}
+
+                    <article class="item">
+
+                        <strong>
+                            <a href="{{ url_for('staff_student_detail', student_id=a['student_id']) }}">
+                                {{ a['student_name'] }}
+                            </a>
+                        </strong>
+
+                        <p>
+                            {{ a['attendance_date'] }}
+                            ·
+                            {{ a['attendance_type'] }}
+                        </p>
+
+                        <p>
+                            Status:
+                            <span class="pill">
+                                {{ a['status'] }}
+                            </span>
+                        </p>
+
+                        <p class="muted">
+                            {{ a['created_at'] or '' }}
+                        </p>
+
+                    </article>
+
+                {% else %}
+
+                    <p class="empty-state">
+                        No attendance entries yet.
+                    </p>
+
+                {% endfor %}
+
+            </section>
+
+        </div>
+
+        <footer class="footer">
+            KREOPUGO · FLOW TRACKER
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

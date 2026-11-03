@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>Admin Dashboard | KREOPUGO</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='admin.css') }}">
+
+    <script src="{{ url_for('static', filename='admin.js') }}"
+            defer></script>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">KREOPUGO</div>
+
+        <nav class="nav">
+
+            <a class="active" href="{{ url_for('admin_dashboard') }}">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('admin_batches') }}">
+                Batch Management
+            </a>
+
+            <a href="{{ url_for('admin_assignments') }}">
+                Assignments
+
+                {% set pending_menu_count = pending_submissions + pending_leaves %}
+
+                {% if pending_menu_count %}
+                    <span class="menu-badge">
+                        {{ pending_menu_count }}
+                    </span>
+                {% endif %}
+            </a>
+
+            <a href="{{ url_for('admin_batch_activity') }}">
+                Batch-wise Activity
+            </a>
+
+            <a href="{{ url_for('admin_announcements') }}">
+                Announcements
+            </a>
+
+            <a href="{{ url_for('admin_reports') }}">
+                Reports
+            </a>
+
+            <a href="{{ url_for('admin_notifications') }}">
+                Notifications
+            </a>
+
+            
+
+        </nav>
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <div class="topbar">
+
+            <div>
+                <h1>Admin Dashboard</h1>
+
+                <div class="sub">
+                    Welcome back, Admin · KreoPugo Flow Tracker
+                </div>
+            </div>
+
+            <a class="btn"
+               href="{{ url_for('logout') }}"
+               data-confirm-logout>
+                Logout
+            </a>
+
+        </div>
+
+
+        <!-- DASHBOARD CARDS -->
+        <div class="stats">
+
+            <div class="card">
+                <div class="label">Total Students</div>
+                <strong>{{ total_students }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Total Batches</div>
+                <strong>{{ total_batches }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Assignments Published</div>
+                <strong>{{ total_assignments }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Submissions Received</div>
+                <strong>{{ total_submissions }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Pending Submissions</div>
+                <strong>{{ pending_submissions }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Pending Leave Requests</div>
+                <strong>{{ pending_leaves }}</strong>
+            </div>
+
+            <div class="card">
+                <div class="label">Attendance Entries</div>
+                <strong>{{ total_attendance }}</strong>
+            </div>
+
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <section class="quick">
+
+            <h2 class="section-title">
+                Quick Actions
+            </h2>
+
+            <div class="quick-grid">
+
+                <a href="{{ url_for('admin_batches') }}">
+                    Manage Batches
+                </a>
+
+                <a href="{{ url_for('admin_assignments') }}">
+                    Assignments
+                </a>
+
+                <a href="{{ url_for('admin_batch_activity') }}">
+                    Batch-wise Assignments, Leaves &amp; Submissions
+                </a>
+
+            </div>
+
+        </section>
+        <section class="panel progress-panel">
+
+            <h2>Overall Progress of Every Student</h2>
+
+            <p class="sub progress-note">
+                Assignment completion is submitted assignments divided
+                by assignments available to the student's batch.
+                Attendance percentage is approved/present attendance
+                entries divided by all finalized attendance entries;
+                pending requests are excluded.
+            </p>
+
+
+            <div class="table-wrap">
+
+                <table class="progress-table">
+
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Batch</th>
+                            <th>Assigned</th>
+                            <th>Submitted</th>
+                            <th>Approved</th>
+                            <th>Assignment Progress</th>
+                            <th>Attendance</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for student in student_progress %}
+
+                        {% set pct = ((student['submitted_count'] * 100 / student['assigned_count'])|round|int) if student['assigned_count'] else 0 %}
+
+                        {% set att_pct = ((student['present_count'] * 100 / student['attendance_record_count'])|round|int) if student['attendance_record_count'] else 0 %}
+
+
+                        <tr>
+
+                            <td>
+
+                                <a class="student-name"
+                                   href="{{ url_for('staff_student_detail', student_id=student['student_id']) }}">
+
+                                    {{ student['name'] }}
+
+                                </a>
+
+                                <div class="muted">
+                                    {{ student['student_id'] }}
+                                    ·
+                                    {{ student['course'] or '-' }}
+                                </div>
+
+                            </td>
+
+
+                            <td>
+                                {{ student['batch'] or 'Unassigned' }}
+                            </td>
+
+                            <td>
+                                {{ student['assigned_count'] }}
+                            </td>
+
+                            <td>
+                                {{ student['submitted_count'] }}
+                            </td>
+
+                            <td>
+                                {{ student['approved_count'] }}
+                            </td>
+
+
+                            <!-- ASSIGNMENT PROGRESS -->
+                            <td class="progress-cell">
+
+                                <strong>{{ pct }}%</strong>
+
+                                <div class="progress-track">
+
+                                    <div class="progress-fill assignment-fill"
+                                         style="width: {{ pct }}%">
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- ATTENDANCE -->
+                            <td class="progress-cell">
+
+                                <strong>{{ att_pct }}%</strong>
+
+                                <div class="muted">
+                                    {{ student['present_count'] }}
+                                    present /
+                                    {{ student['attendance_record_count'] }}
+                                    recorded
+                                </div>
+
+                                <div class="progress-track">
+
+                                    <div class="progress-fill attendance-fill"
+                                         style="width: {{ att_pct }}%">
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+                            <td colspan="7" class="empty-row">
+                                No students registered yet.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+</main>
+
+</div>
+
+</body>
+</html>

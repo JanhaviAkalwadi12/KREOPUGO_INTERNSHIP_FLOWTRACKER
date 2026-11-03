@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements | Student Portal</title>
+<link rel="stylesheet"
+          href="{{ url_for('static', filename='student_announcements.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Announcements</h1>
+        <p class="subtitle">Updates shared by your mentors</p>
+
+        <a class="back-link"
+           href="{{ url_for('student_dashboard') }}">
+            &larr; Back to Dashboard
+        </a>
+
+        {% for item in announcements %}
+            <article class="announcement">
+                <h2>{{ item["title"] }}</h2>
+
+                <p class="message">{{ item["message"] }}</p>
+
+                <p class="meta">
+                    Posted by {{ item["created_by"] }}
+                    &middot;
+                    {{ item["created_at"] }}
+                </p>
+            </article>
+        {% else %}
+            <div class="empty-message">
+                <p>No announcements available right now.</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

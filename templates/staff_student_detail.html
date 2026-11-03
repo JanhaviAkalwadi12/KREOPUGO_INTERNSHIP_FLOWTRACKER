@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Student Progress | KreoPugo</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='staff_student_detail.css') }}">
+</head>
+
+<body>
+
+<header>
+    <strong>KREOPUGO · Student Profile &amp; Progress</strong>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</header>
+
+<main class="wrap">
+
+    <p class="page-actions">
+        <a class="btn blue" href="{{ url_for('admin_batches') }}">
+            ← Batch Management
+        </a>
+
+        <a class="btn" href="{{ url_for('admin_dashboard') }}">
+            Dashboard
+        </a>
+    </p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <p class="flash {{ category }}">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <h1>{{ student['name'] }}</h1>
+
+    <p class="muted">
+        Student ID: {{ student['student_id'] }}
+        · Added: {{ student['created_at'] or '-' }}
+    </p>
+
+    <!-- Student Statistics -->
+    <div class="stats">
+
+        <div class="stat">
+            <span>Assignments Available</span>
+            <strong>{{ assigned_count }}</strong>
+        </div>
+
+        <div class="stat">
+            <span>Submissions</span>
+            <strong>{{ submission_count }}</strong>
+        </div>
+
+        <div class="stat">
+            <span>Pending Submissions</span>
+            <strong>{{ pending_submissions }}</strong>
+        </div>
+
+        <div class="stat">
+            <span>Approved Submissions</span>
+            <strong>{{ approved_submissions }}</strong>
+        </div>
+
+        <div class="stat">
+            <span>Attendance Entries</span>
+            <strong>{{ attendance_count }}</strong>
+        </div>
+
+        <div class="stat">
+            <span>Attendance Records</span>
+            <strong>{{ attendance_count }}</strong>
+        </div>
+
+        <div class="stat">
+            <span>Leave Applications</span>
+            <strong>{{ leave_count }}</strong>
+        </div>
+
+        <div class="stat">
+            <span>Pending Leave</span>
+            <strong>{{ pending_leaves }}</strong>
+        </div>
+
+    </div>
+
+    <!-- Edit Student Details -->
+    <section class="panel">
+
+        <h2>Edit Student Details</h2>
+
+        <p class="muted">
+            Change details and save. Passwords are never displayed
+            or edited on this page.
+        </p>
+
+        <form method="POST">
+
+            <div class="grid">
+
+                <div>
+                    <label>Full Name</label>
+                    <input
+                        name="name"
+                        value="{{ student['name'] }}"
+                        required
+                        maxlength="150">
+                </div>
+
+                <div>
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value="{{ student['email'] }}"
+                        required
+                        maxlength="200">
+                </div>
+
+                <div>
+                    <label>Mobile (optional)</label>
+                    <input
+                        name="mobile"
+                        value="{{ student['mobile'] or '' }}"
+                        inputmode="numeric"
+                        pattern="[6-9][0-9]{9}"
+                        maxlength="10">
+                </div>
+
+                <div>
+                    <label>College</label>
+                    <input
+                        name="college"
+                        value="{{ student['college'] or '' }}"
+                        maxlength="200">
+                </div>
+
+                <div>
+                    <label>Course</label>
+                    <input
+                        name="course"
+                        value="{{ student['course'] or '' }}"
+                        required
+                        maxlength="100">
+                </div>
+
+                <div>
+                    <label>Batch</label>
+
+                    <select name="batch">
+
+                        <option value="">Not assigned</option>
+
+                        {% for b in batches %}
+                            <option
+                                value="{{ b['batch_name'] }}"
+                                {% if student['batch'] == b['batch_name'] %}
+                                    selected
+                                {% endif %}>
+                                {{ b['batch_name'] }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="full-width">
+                    <label>Address</label>
+
+                    <textarea
+                        name="address"
+                        rows="3"
+                        maxlength="500">{{ student['address'] or '' }}</textarea>
+                </div>
+
+            </div>
+
+            <p class="form-submit">
+                <button type="submit">Save Student Details</button>
+            </p>
+
+        </form>
+
+    </section>
+
+    <!-- Assignment Progress -->
+    <section class="panel">
+
+        <h2>Assignment Progress</h2>
+
+        <div class="table-wrap">
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Assignment</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for a in assignments %}
+                    <tr>
+                        <td>{{ a['title'] }}</td>
+                        <td>{{ a['due_date'] or '-' }}</td>
+                        <td>{{ a['submission_status'] or 'Not Submitted' }}</td>
+                        <td>{{ a['submitted_at'] or '-' }}</td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="4">
+                            No assignments are assigned to this batch.
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </section>
+
+    <!-- Submitted Files -->
+    <section class="panel">
+
+        <h2>Submitted Files</h2>
+
+        {% for s in submissions %}
+
+            <article class="item">
+
+                <strong>{{ s['title'] or 'Assignment' }}</strong>
+
+                <p>
+                    {{ s['file_name'] }}
+                    · Status: {{ s['status'] }}
+                </p>
+
+                <p class="muted">
+                    {{ s['submitted_at'] }}
+                    · Feedback: {{ s['admin_feedback'] or 'No feedback yet' }}
+                </p>
+
+            </article>
+
+        {% else %}
+
+            <p>No assignment submissions yet.</p>
+
+        {% endfor %}
+
+    </section>
+
+    <!-- Attendance History -->
+    <section class="panel">
+
+        <h2>Attendance History</h2>
+
+        <div class="table-wrap">
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Attendance</th>
+                        <th>Record Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for a in attendance_rows %}
+                    <tr>
+                        <td>{{ a['attendance_date'] }}</td>
+                        <td>{{ a['attendance_type'] }}</td>
+                        <td>{{ a['status'] }}</td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="3">No attendance records.</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </section>
+
+    <!-- Leave Applications -->
+    <section class="panel">
+
+        <h2>Leave Applications</h2>
+
+        {% for l in leave_rows %}
+
+            <article class="item">
+
+                <strong>
+                    {{ l['start_date'] }} to {{ l['end_date'] }}
+                </strong>
+
+                <p>{{ l['reason'] }}</p>
+
+                <p class="muted">
+                    Status: {{ l['status'] }}
+                    · Feedback: {{ l['admin_feedback'] or '-' }}
+                </p>
+
+            </article>
+
+        {% else %}
+
+            <p>No leave applications.</p>
+
+        {% endfor %}
+
+    </section>
+
+</main>
+
+</body>
+</html>

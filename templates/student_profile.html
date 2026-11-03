@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+<div class="profile-top">
+    <div>
+        <h2>My Profile</h2>
+        <p class="profile-help">
+            View your profile details. Select <strong>Edit Profile</strong>
+            to make changes, then confirm with Save Changes.
+        </p>
+    </div>
+
+    <button class="profile-button" id="editProfileButton" type="button">
+        Edit Profile
+    </button>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        <p class="profile-message {{ category }}">{{ message }}</p>
+    {% endfor %}
+{% endwith %}
+
+<section class="profile-card">
+    <form id="profileForm" method="post"
+          action="{{ url_for('student_profile') }}">
+
+        <div class="profile-grid profile-main-grid">
+
+            <div class="profile-field">
+                <label for="student_id">Student ID</label>
+                <input id="student_id" value="{{ student['student_id'] }}" readonly>
+            </div>
+
+            <div class="profile-field">
+                <label for="name">Full Name</label>
+                <input id="name" name="name"
+                       value="{{ student['name'] or '' }}"
+                       maxlength="150" required readonly data-editable="true">
+            </div>
+
+            <div class="profile-field">
+                <label for="email">Email Address</label>
+                <input id="email" type="email" name="email"
+                       value="{{ student['email'] or '' }}"
+                       maxlength="200" required readonly data-editable="true">
+            </div>
+
+            <div class="profile-field">
+                <label for="mobile">Mobile Number</label>
+                <input id="mobile" name="mobile"
+                       value="{{ student['mobile'] or '' }}"
+                       inputmode="numeric"
+                       pattern="[6-9][0-9]{9}"
+                       maxlength="10"
+                       placeholder="10-digit mobile number"
+                       readonly data-editable="true">
+            </div>
+
+            <div class="profile-field">
+                <label for="college">College</label>
+                <input id="college" value="{{ student['college'] or '' }}" readonly>
+            </div>
+
+            <div class="profile-field">
+                <label for="course">Course</label>
+                <input id="course" value="{{ student['course'] or '' }}" readonly>
+            </div>
+
+            <div class="profile-field">
+                <label for="batch">Batch</label>
+                <input id="batch"
+                       value="{{ student['batch'] or 'Not assigned' }}" readonly>
+            </div>
+
+            <div class="profile-field">
+                <label for="created_at">Registered On</label>
+                <input id="created_at"
+                       value="{{ student['created_at'] or '-' }}" readonly>
+            </div>
+
+            <div class="profile-field full-width">
+                <label for="address">Address</label>
+                <textarea id="address" name="address"
+                          maxlength="500"
+                          placeholder="Enter your address"
+                          readonly data-editable="true">{{ student['address'] or '' }}</textarea>
+            </div>
+
+        </div>
+
+        <p class="edit-hint" id="editHint">
+            Your Student ID, college, course, batch and registration date
+            are managed by your institute and cannot be changed here.
+        </p>
+
+        <div class="profile-actions" id="profileActions" hidden>
+            <button class="profile-button" type="submit">Save Changes</button>
+            <button class="profile-button secondary" id="cancelProfileButton"
+                    type="button">Cancel</button>
+        </div>
+    </form>
+</section>
+
+<section class="profile-section">
+    <h2>Change Password</h2>
+
+    <p class="profile-help">
+        For your security, enter your current password before setting a new
+        password. Use at least 8 characters.
+    </p>
+
+    <form method="post" action="{{ url_for('student_change_password') }}">
+
+        <div class="profile-grid">
+
+            <div class="profile-field full-width">
+                <label for="current_password">Current Password</label>
+
+                <div class="password-wrapper">
+                    <input id="current_password" type="password"
+                           name="current_password"
+                           autocomplete="current-password" required>
+
+                    <button type="button" class="password-toggle"
+                            data-password-target="current_password">Show</button>
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label for="new_password">New Password</label>
+
+                <div class="password-wrapper">
+                    <input id="new_password" type="password"
+                           name="new_password" minlength="8"
+                           autocomplete="new-password" required>
+
+                    <button type="button" class="password-toggle"
+                            data-password-target="new_password">Show</button>
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label for="confirm_password">Confirm New Password</label>
+
+                <div class="password-wrapper">
+                    <input id="confirm_password" type="password"
+                           name="confirm_password" minlength="8"
+                           autocomplete="new-password" required>
+
+                    <button type="button" class="password-toggle"
+                            data-password-target="confirm_password">Show</button>
+                </div>
+            </div>
+
+        </div>
+
+        <button class="profile-button" type="submit">Update Password</button>
+    </form>
+</section>
+
+</body>
+</html>

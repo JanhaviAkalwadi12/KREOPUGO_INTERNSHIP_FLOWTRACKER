@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Batch Dashboard | KreoPugo</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='batch_dashboard.css') }}">
+</head>
+
+<body>
+
+<header>
+    <strong>KREOPUGO | Batch Dashboard</strong>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</header>
+
+<main>
+
+    <a class="btn blue" href="{{ url_for('admin_dashboard') }}">
+        ← Admin Dashboard
+    </a>
+
+    <h1>Registered Batches</h1>
+
+    <p class="muted">
+        Choose a batch to view its registered students and activity.
+    </p>
+
+    <!-- BATCH LIST -->
+    <section class="panel">
+
+        <div class="batch-grid">
+
+            {% for b in batches %}
+
+            <a class="batch-card
+               {% if selected_batch == b['batch_name'] %}active{% endif %}"
+               href="{{ url_for('admin_batch_activity', batch=b['batch_name']) }}">
+
+                <strong>{{ b['batch_name'] }}</strong>
+
+                <span>{{ b['student_count'] }} students</span>
+
+                <span>{{ b['assignment_count'] }} assignments</span>
+
+                <span>Open batch →</span>
+
+            </a>
+
+            {% else %}
+
+            <div class="empty">
+                No batches registered yet.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    {% if selected_batch %}
+
+    <h1>{{ selected_batch }}</h1>
+
+    <!-- SUMMARY CARDS -->
+    <div class="stats">
+
+        <div class="stat">
+            <span>Students</span>
+            <b>{{ student_count }}</b>
+        </div>
+
+        <div class="stat">
+            <span>Assignments</span>
+            <b>{{ assignments|length }}</b>
+        </div>
+
+        <div class="stat">
+            <span>Submissions</span>
+            <b>{{ submissions|length }}</b>
+        </div>
+
+        <div class="stat">
+            <span>Leave Requests</span>
+            <b>{{ leaves|length }}</b>
+        </div>
+
+        <div class="stat">
+            <span>Attendance Entries</span>
+            <b>{{ attendance|length }}</b>
+        </div>
+
+    </div>
+
+
+    <!-- TABS -->
+    <nav class="tabs">
+
+        <button type="button" class="tab active"
+                data-tab="students">
+            Students & Progress
+        </button>
+
+        <button type="button" class="tab"
+                data-tab="assignments">
+            Assignments
+        </button>
+
+        <button type="button" class="tab"
+                data-tab="submissions">
+            Submissions
+        </button>
+
+        <button type="button" class="tab"
+                data-tab="leaves">
+            Leave Requests
+        </button>
+
+        <button type="button" class="tab"
+                data-tab="attendance">
+            Attendance
+        </button>
+
+    </nav>
+
+
+    <!-- STUDENTS -->
+    <section id="students" class="panel tab-panel active">
+
+        <h2>Students and Progress</h2>
+
+        <div class="scroll-area">
+
+            <div class="student-grid">
+
+                {% for st in batch_students %}
+
+                {% set pct =
+                    (st['submitted_count'] * 100 // st['assigned_count'])
+                    if st['assigned_count'] else 0
+                %}
+
+                <article class="student">
+
+                    <strong>{{ st['name'] }}</strong>
+
+                    <small>
+                        {{ st['student_id'] }}
+                    </small>
+
+                    <small>
+                        {{ st['email'] }}
+                    </small>
+
+                    <div class="progress">
+                        <i style="width: {{ [pct, 100]|min }}%"></i>
+                    </div>
+
+                    <small>
+                        Assignment Progress: {{ pct }}%
+                    </small>
+
+                    <small>
+                        Submitted:
+                        {{ st['submitted_count'] }}/{{ st['assigned_count'] }}
+                    </small>
+
+                    <small>
+                        Leaves: {{ st['leave_count'] }}
+                        |
+                        Attendance: {{ st['attendance_count'] }}
+                        |
+                        Present: {{ st['present_count'] }}
+                    </small>
+
+                    <a href="{{ url_for('staff_student_detail',
+                                        student_id=st['student_id']) }}">
+                        Open Full Student Profile →
+                    </a>
+
+                </article>
+
+                {% else %}
+
+                <div class="empty">
+                    No students registered in this batch.
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ASSIGNMENTS -->
+    <section id="assignments" class="panel tab-panel">
+
+        <h2>Assignments</h2>
+
+        <div class="scroll-area">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Due Date</th>
+                        <th>Submissions</th>
+                        <th>Published</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for a in assignments %}
+
+                    <tr>
+                        <td>{{ a['title'] }}</td>
+                        <td>{{ a['due_date'] or '-' }}</td>
+                        <td>{{ a['submission_count'] }}</td>
+                        <td>{{ a['created_at'] or '-' }}</td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="4">No assignments for this batch.</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <p>
+            <a class="btn" href="{{ url_for('admin_assignments') }}">
+                Manage Assignments
+            </a>
+        </p>
+
+    </section>
+
+
+    <!-- SUBMISSIONS -->
+    <section id="submissions" class="panel tab-panel">
+
+        <h2>Student Submissions</h2>
+
+        <div class="scroll-area">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Assignment</th>
+                        <th>File</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for s in submissions %}
+
+                    <tr>
+                        <td>
+                            {{ s['student_name'] or s['student_id'] }}
+                            <br>
+                            {{ s['student_id'] }}
+                        </td>
+
+                        <td>{{ s['title'] or 'Assignment' }}</td>
+
+                        <td>{{ s['file_name'] }}</td>
+
+                        <td>{{ s['submitted_at'] or '-' }}</td>
+
+                        <td>
+                            <span class="pill">
+                                {{ s['status'] }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <a href="{{ url_for('download_submission',
+                                                submission_id=s['id']) }}">
+                                Download
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="6">No submissions yet.</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <p>
+            <a class="btn" href="{{ url_for('admin_requests') }}">
+                Review Submissions
+            </a>
+        </p>
+
+    </section>
+
+
+    <!-- LEAVE REQUESTS -->
+    <section id="leaves" class="panel tab-panel">
+
+        <h2>Leave Requests</h2>
+
+        <div class="scroll-area">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Dates</th>
+                        <th>Reason</th>
+                        <th>Applied</th>
+                        <th>Status</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for l in leaves %}
+
+                    <tr>
+                        <td>{{ l['student_name'] or l['student_id'] }}</td>
+
+                        <td>
+                            {{ l['start_date'] }} – {{ l['end_date'] }}
+                        </td>
+
+                        <td>{{ l['reason'] }}</td>
+
+                        <td>{{ l['created_at'] or '-' }}</td>
+
+                        <td>
+                            <span class="pill">{{ l['status'] }}</span>
+                        </td>
+
+                        <td>{{ l['admin_feedback'] or '-' }}</td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="6">No leave requests.</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <p>
+            <a class="btn" href="{{ url_for('admin_requests') }}">
+                Review Leave Requests
+            </a>
+        </p>
+
+    </section>
+
+
+    <!-- ATTENDANCE -->
+    <section id="attendance" class="panel tab-panel">
+
+        <h2>Attendance</h2>
+
+        <div class="scroll-area">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for a in attendance %}
+
+                    <tr>
+                        <td>{{ a['student_name'] or a['student_id'] }}</td>
+
+                        <td>{{ a['attendance_date'] }}</td>
+
+                        <td>{{ a['attendance_type'] }}</td>
+
+                        <td>{{ a['reason'] or '-' }}</td>
+
+                        <td>
+                            <span class="pill">{{ a['status'] }}</span>
+                        </td>
+
+                        <td>{{ a['admin_feedback'] or '-' }}</td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="6">No attendance records.</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <p>
+            <a class="btn" href="{{ url_for('admin_requests') }}">
+                Review Attendance Requests
+            </a>
+        </p>
+
+    </section>
+
+    {% endif %}
+
+</main>
+
+
+<!-- JAVASCRIPT: INCLUDED DIRECTLY IN HTML -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const tabButtons = document.querySelectorAll(".tab");
+    const tabPanels = document.querySelectorAll(".tab-panel");
+
+    tabButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const targetId = button.getAttribute("data-tab");
+            const targetPanel = document.getElementById(targetId);
+
+            if (!targetPanel) {
+                console.error("Tab panel not found:", targetId);
+                return;
+            }
+
+            // Remove active class from all buttons
+            tabButtons.forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+
+            // Hide all panels
+            tabPanels.forEach(function (panel) {
+                panel.classList.remove("active");
+            });
+
+            // Activate clicked button and its panel
+            button.classList.add("active");
+            targetPanel.classList.add("active");
+
+        });
+
+    });
+
+});
+</script>
+
+</body>
+</html>

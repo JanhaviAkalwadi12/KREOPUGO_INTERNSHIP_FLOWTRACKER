@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Announcements | KreoPugo</title>
+</head>
+<body>
+<main>
+    <a href="{{ url_for('admin_dashboard') }}">← Back to Admin Dashboard</a>
+    <h1>Announcement Management</h1>
+    <p>Publish notices that appear on student dashboards.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <p class="notice">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <section class="panel">
+        <h2>Create Announcement</h2>
+
+        <form method="POST" action="{{ url_for('admin_announcements') }}">
+            <label for="title">Announcement Title *</label>
+            <input id="title" name="title" maxlength="200" required>
+
+            <label for="message">Announcement Message *</label>
+            <textarea id="message" name="message"
+                      rows="5" required></textarea>
+
+            <button type="submit">Publish Announcement</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Published Announcements</h2>
+
+        {% for announcement in announcements %}
+            <article class="item">
+                <h3>{{ announcement['title'] }}</h3>
+                <p>{{ announcement['message'] }}</p>
+                <p><small>Published: {{ announcement['created_at'] }}</small></p>
+            </article>
+        {% else %}
+            <p>No announcements published yet.</p>
+        {% endfor %}
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Student Dashboard | KreoPugo</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='student_dashboard.css') }}">
+
+    <script src="{{ url_for('static', filename='student_dashboard.js') }}" defer></script>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">KREOPUGO</div>
+
+        <nav>
+            <a class="active" href="{{ url_for('student_dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('student_profile') }}">My Profile</a>
+            <a href="{{ url_for('student_assignments') }}">Assignments / Submit</a>
+            <a href="{{ url_for('student_submissions') }}">My Submissions</a>
+            <a href="{{ url_for('student_attendance') }}">Attendance</a>
+            <a href="{{ url_for('student_leave') }}">Apply for Leave</a>
+            <a href="{{ url_for('student_announcements') }}">Announcements</a>
+            <a href="{{ url_for('student_calendar') }}">Calendar</a>
+
+            <a href="{{ url_for('student_notifications') }}">
+                Notifications
+                {% if unread_notifications %}
+                    <span class="menu-badge">{{ unread_notifications }}</span>
+                {% endif %}
+            </a>
+
+                </nav>
+    </aside>
+
+    <main class="main">
+
+        <div class="top">
+            <div>
+                <h1>Student Dashboard</h1>
+                <p class="muted">
+                    Welcome back, {{ student['name'] }}
+                    · ID: {{ student['student_id'] }}
+                </p>
+            </div>
+
+            <a class="logout" href="{{ url_for('logout') }}" data-confirm-logout>
+                Logout
+            </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <p class="flash {{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="cards">
+
+            <section class="card">
+                Assignments for you
+                <strong>{{ total_assignments }}</strong>
+            </section>
+
+            <section class="card">
+                Assignments submitted
+                <strong>{{ submitted_count }}</strong>
+            </section>
+
+            <section class="card">
+                Your batch
+                <strong class="batch-value">
+                    {{ student['batch'] or 'Not assigned' }}
+                </strong>
+            </section>
+
+        </div>
+
+        <h2 class="quick-heading">Quick Actions</h2>
+
+        <div class="quick">
+            <a href="{{ url_for('student_assignments') }}">
+                View & Submit Assignments
+            </a>
+
+            <a href="{{ url_for('student_attendance') }}">
+                Attendance Request
+            </a>
+
+            <a href="{{ url_for('student_leave') }}">
+                Apply for Leave
+            </a>
+
+            <a href="{{ url_for('student_submissions') }}">
+                Check Submission Status
+            </a>
+        </div>
+
+        <div class="columns">
+
+            <section class="panel">
+                <h2>Available Assignments</h2>
+
+                {% for a in assignments %}
+                    <article class="item">
+                        <h3>{{ a['title'] }}</h3>
+
+                        <p>{{ a['description'] }}</p>
+
+                        <p class="muted">
+                            Deadline:
+                            {{ (a['due_date']|replace('T', ' ')) if a['due_date'] else 'Not specified' }}
+                            · Status:
+                            {{ a['submission_status'] or 'Not Submitted' }}
+                        </p>
+                    </article>
+                {% else %}
+                    <p>No assignments are available for your batch yet.</p>
+                {% endfor %}
+
+                <p class="all-link">
+                    <a href="{{ url_for('student_assignments') }}">
+                        Open all assignments →
+                    </a>
+                </p>
+            </section>
+
+            <section class="panel">
+
+                <h2>Announcements</h2>
+
+                {% for a in announcements %}
+                    <article class="item">
+                        <h3>{{ a['title'] }}</h3>
+                        <p>{{ a['message'] }}</p>
+                        <p class="muted">{{ a['created_at'] }}</p>
+                    </article>
+                {% else %}
+                    <p>No announcements yet.</p>
+                {% endfor %}
+
+                <h2 class="notification-heading">Recent Notifications</h2>
+
+                {% for n in notifications %}
+                    <article class="item">
+                        <p>{{ n['message'] }}</p>
+                        <p class="muted">{{ n['created_at'] }}</p>
+                    </article>
+                {% else %}
+                    <p>No notifications yet.</p>
+                {% endfor %}
+
+            </section>
+
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "flowtracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KREOPUGO Flow Tracker - Student Management System",
+  "scripts": {
+    "start": "python app.py"
+  }
+}

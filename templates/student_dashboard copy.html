@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | KREOPUGO</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='student_dashboard.css') }}">
+
+    <script src="{{ url_for('static', filename='student_dashboard.js') }}" defer></script>
+</head>
+
+<body>
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+        <div class="brand-icon">🎓</div>
+        <div>
+            <h2>KREOPUGO</h2>
+            <small>STUDENT PORTAL</small>
+        </div>
+    </div>
+
+    <div class="nav-label">Workspace</div>
+
+    <nav class="nav">
+        <a class="active" href="{{ url_for('student_dashboard') }}">
+            <span class="ico">▦</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{{ url_for('student_profile') }}">
+            <span class="ico">♙</span>
+            <span>My Profile</span>
+        </a>
+
+        <a href="{{ url_for('student_assignments') }}">
+            <span class="ico">▤</span>
+            <span>Assignments</span>
+        </a>
+
+        <a href="{{ url_for('student_announcements') }}">
+            <span class="ico">▣</span>
+            <span>Announcements</span>
+        </a>
+
+        <a href="{{ url_for('student_notifications') }}">
+            <span class="ico">♧</span>
+            <span>Notifications</span>
+        </a>
+
+        <a href="{{ url_for('student_calendar') }}">
+            <span class="ico">▦</span>
+            <span>Calendar</span>
+        </a>
+
+        <a href="{{ url_for('student_submissions') }}">
+            <span class="ico">✓</span>
+            <span>My Submissions</span>
+        </a>
+    </nav>
+
+    <div class="nav-label">Account</div>
+
+    <nav class="nav">
+        <a href="{{ url_for('logout') }}">
+            <span class="ico">↪</span>
+            <span>Logout</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+        KreoPugo Flow Pilot
+        <br>
+        <span style="font-size:10px">Student workspace</span>
+    </div>
+
+</aside>
+
+<main class="main">
+
+    <header class="topbar">
+
+        <div class="top-left">
+            <button
+                class="menu-toggle"
+                type="button"
+                id="menuToggle"
+                aria-label="Toggle sidebar">
+                ☰
+            </button>
+
+            <div>
+                <h1>Student Dashboard</h1>
+                <p>Overview of your student workspace</p>
+            </div>
+        </div>
+
+        <div class="top-actions">
+            <a
+                class="icon-btn"
+                href="{{ url_for('student_notifications') }}"
+                aria-label="Notifications">♧</a>
+
+            <div class="avatar">
+                {{ (session.get('name') or 'S')[:1]|upper }}
+            </div>
+        </div>
+
+    </header>
+
+    <section class="content">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {% if category == 'error' %}error{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="welcome">
+            <div>
+                <h2>
+                    Welcome back,
+                    {% if student is defined and student %}
+                        {{ student.get('name', session.get('name', 'Student')) }}
+                    {% else %}
+                        {{ session.get('name', 'Student') }}
+                    {% endif %}
+                    👋
+                </h2>
+
+                <p>
+                    Here is an overview of your profile, assignments and latest updates.
+                </p>
+            </div>
+
+            <div class="date-chip">
+                🎓 &nbsp; Student Workspace
+            </div>
+        </div>
+
+        <!-- SUMMARY CARDS -->
+
+        <div class="stats">
+
+            <article class="stat">
+                <div>
+                    <div class="stat-label">My Assignments</div>
+                    <div class="stat-value">
+                        {{ assignments|length if assignments is defined else 0 }}
+                    </div>
+                    <div class="stat-note">Assigned to your batch</div>
+                </div>
+                <div class="stat-icon ic-maroon">▤</div>
+            </article>
+
+            <article class="stat">
+                <div>
+                    <div class="stat-label">Announcements</div>
+                    <div class="stat-value">
+                        {{ announcements|length if announcements is defined else 0 }}
+                    </div>
+                    <div class="stat-note">Updates from admin</div>
+                </div>
+                <div class="stat-icon ic-orange">▣</div>
+            </article>
+
+            <article class="stat">
+                <div>
+                    <div class="stat-label">Notifications</div>
+                    <div class="stat-value">
+                        {{ notifications|length if notifications is defined else 0 }}
+                    </div>
+                    <div class="stat-note">Recent messages</div>
+                </div>
+                <div class="stat-icon ic-blue">♧</div>
+            </article>
+
+            <article class="stat">
+                <div>
+                    <div class="stat-label">My Batch</div>
+                    <div class="stat-value" style="font-size:20px">
+                        {% if student is defined and student %}
+                            {{ student.get('batch', session.get('batch', '—')) or '—' }}
+                        {% else %}
+                            {{ session.get('batch', '—') }}
+                        {% endif %}
+                    </div>
+                    <div class="stat-note">Your assigned batch</div>
+                </div>
+                <div class="stat-icon ic-green">♙</div>
+            </article>
+
+        </div>
+
+        <div class="columns">
+
+            <!-- LEFT COLUMN -->
+
+            <div>
+
+                <!-- STUDENT PROFILE -->
+
+                <section class="panel">
+
+                    <div class="panel-head">
+                        <h3>My Profile</h3>
+                        <a href="{{ url_for('student_profile') }}">View profile →</a>
+                    </div>
+
+                    {% set s = student if student is defined and student else {} %}
+
+                    <div class="profile-grid">
+
+                        <div class="profile-item">
+                            <div class="label">Student ID</div>
+                            <div class="value">
+                                {{ s.get('student_id', s.get('id', session.get('student_id', session.get('user_id', '—')))) }}
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="label">Email Address</div>
+                            <div class="value">
+                                {{ s.get('email', session.get('email', '—')) }}
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="label">Mobile</div>
+                            <div class="value">
+                                {{ s.get('mobile', '—') }}
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="label">College</div>
+                            <div class="value">
+                                {{ s.get('college', '—') }}
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="label">Course</div>
+                            <div class="value">
+                                {{ s.get('course', '—') }}
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="label">Batch</div>
+                            <div class="value">
+                                {{ s.get('batch', session.get('batch', '—')) }}
+                            </div>
+                        </div>
+
+                        <div class="profile-item" style="grid-column:1/-1">
+                            <div class="label">Address</div>
+                            <div class="value">
+                                {{ s.get('address', '—') }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <!-- ASSIGNMENTS -->
+
+                <section class="panel">
+
+                    <div class="panel-head">
+                        <h3>My Assignments</h3>
+                        <a href="{{ url_for('student_assignments') }}">View all →</a>
+                    </div>
+
+                    {% if assignments is defined and assignments %}
+
+                        <div class="list">
+
+                            {% for assignment in assignments[:5] %}
+
+                                <div class="list-item">
+
+                                    <div class="item-title">
+                                        {{ assignment.get('title', 'Untitled assignment') }}
+                                    </div>
+
+                                    <div class="item-body">
+                                        {{ assignment.get('description', 'No description provided.') }}
+                                    </div>
+
+                                    <div style="margin-top:8px">
+
+                                        <span class="pill">
+                                            {{ assignment.get('status', 'Assigned') }}
+                                        </span>
+
+                                        {% if assignment.get('due_date') %}
+                                            <span class="item-date">
+                                                Due: {{ assignment.get('due_date') }}
+                                            </span>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty">
+                            <div class="empty-icon">📚</div>
+                            No assignments for your batch yet.
+                        </div>
+
+                    {% endif %}
+
+                </section>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+
+            <div>
+
+                <!-- ANNOUNCEMENTS -->
+
+                <section class="panel">
+
+                    <div class="panel-head">
+                        <h3>Latest Announcements</h3>
+                        <a href="{{ url_for('student_announcements') }}">View all →</a>
+                    </div>
+
+                    {% if announcements is defined and announcements %}
+
+                        <div class="list">
+
+                            {% for announcement in announcements[:4] %}
+
+                                <div class="list-item">
+
+                                    <div class="item-title">
+                                        {{ announcement.get('title', 'Announcement') }}
+                                    </div>
+
+                                    <div class="item-body">
+                                        {{ announcement.get('message', announcement.get('content', '')) }}
+                                    </div>
+
+                                    <div class="item-date">
+                                        {{ announcement.get('created_at', announcement.get('date', '')) }}
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty">
+                            <div class="empty-icon">📢</div>
+                            No announcements available right now.
+                        </div>
+
+                    {% endif %}
+
+                </section>
+
+                <!-- NOTIFICATIONS -->
+
+                <section class="panel">
+
+                    <div class="panel-head">
+                        <h3>Recent Notifications</h3>
+                        <a href="{{ url_for('student_notifications') }}">View all →</a>
+                    </div>
+
+                    {% if notifications is defined and notifications %}
+
+                        <div class="list">
+
+                            {% for notification in notifications[:4] %}
+
+                                <div class="list-item">
+
+                                    <div class="item-body">
+                                        {{ notification.get('message', notification.get('title', 'Notification')) }}
+                                    </div>
+
+                                    <div class="item-date">
+                                        {{ notification.get('created_at', notification.get('date', '')) }}
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty">
+                            <div class="empty-icon">🔔</div>
+                            You are all caught up. No recent notifications.
+                        </div>
+
+                    {% endif %}
+
+                </section>
+
+                <!-- QUICK ACCESS -->
+
+                <section class="panel">
+
+                    <div class="panel-head">
+                        <h3>Quick Access</h3>
+                    </div>
+
+                    <div class="quick-links">
+
+                        <a class="quick-link"
+                           href="{{ url_for('student_assignments') }}">
+                            <span>▤</span>
+                            Assignments
+                        </a>
+
+                        <a class="quick-link"
+                           href="{{ url_for('student_announcements') }}">
+                            <span>▣</span>
+                            Announcements
+                        </a>
+
+                        <a class="quick-link"
+                           href="{{ url_for('student_calendar') }}">
+                            <span>▦</span>
+                            Calendar
+                        </a>
+
+                        <a class="quick-link"
+                           href="{{ url_for('student_submissions') }}">
+                            <span>✓</span>
+                            Submissions
+                        </a>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </div>
+
+        <div class="footer">
+            © KreoPugo Flow Pilot · Student Portal
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>
