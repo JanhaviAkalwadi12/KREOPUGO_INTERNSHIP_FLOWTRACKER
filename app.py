@@ -36,20 +36,6 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, "static"),
 )
 
-class VercelPathFixMiddleware:
-    """Ensure PATH_INFO reflects the original request path when Vercel rewrites to /api/index."""
-    def __init__(self, wsgi_app):
-        self.wsgi_app = wsgi_app
-
-    def __call__(self, environ, start_response):
-        path = environ.get("PATH_INFO", "")
-        if path == "/api/index" or path.startswith("/api/index/"):
-            rest = path[len("/api/index"):]
-            environ["PATH_INFO"] = rest if rest.startswith("/") else ("/" + rest if rest else "/")
-        return self.wsgi_app(environ, start_response)
-
-app.wsgi_app = VercelPathFixMiddleware(app.wsgi_app)
-
 # Vercel / serverless environment detection
 IS_VERCEL = bool(
     os.environ.get("VERCEL")

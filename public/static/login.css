@@ -1,0 +1,26 @@
+
+.brand {
+    color: #781E12;
+}
+
+.login-card button.btn,
+.login-card .btn {
+    border-color: #781E12;
+    background: #781E12;
+    color: #FFFFFF;
+}
+
+.login-card button.btn:hover,
+.login-card .btn:hover {
+    border-color: #F04416;
+    background: #F04416;
+    color: #FFFFFF;
+}
+
+.login-card .form-group a {
+    color: #781E12 !important;
+}
+
+.login-card .form-group a:hover {
+    color: #F04416 !important;
+}

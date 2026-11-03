@@ -1,0 +1,318 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f4f6f9;
+    color: #173d70;
+}
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    position: sticky;
+    top: 0;
+    width: 245px;
+    flex: 0 0 245px;
+    height: 100vh;
+    min-height: 100vh;
+    align-self: flex-start;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: #1b4275;
+    color: #fff;
+    padding: 14px 12px;
+}
+
+.brand {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    padding: 0 8px 18px;
+}
+
+.nav a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 9px 11px;
+    margin: 2px 0;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.nav a:hover,
+.nav a.active {
+    background: #7d2012;
+}
+
+.nav .logout-link {
+    margin-top: 10px;
+}
+
+/* NOTIFICATION BADGE */
+.menu-badge {
+    display: inline-block;
+    min-width: 19px;
+    padding: 2px 6px;
+    margin-left: 6px;
+    border-radius: 12px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* MAIN CONTENT */
+.main {
+    flex: 1;
+    min-width: 0;
+    padding: 16px 20px 24px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 16px;
+}
+
+h1 {
+    font-size: 27px;
+    margin: 0 0 8px;
+    color: #173d70;
+}
+
+.sub {
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* BUTTON */
+.btn {
+    display: inline-block;
+    border: 0;
+    border-radius: 7px;
+    background: #7d2012;
+    color: #fff;
+    text-decoration: none;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn.blue {
+    background: #1b4275;
+}
+
+/* DASHBOARD CARDS */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.card,
+.panel {
+    background: #fff;
+    border: 1px solid #dce3ed;
+    border-radius: 10px;
+    padding: 14px;
+    min-width: 0;
+}
+
+.card .label {
+    font-size: 15px;
+    color: #173d70;
+}
+
+.card strong {
+    display: block;
+    font-size: 28px;
+    color: #7d2012;
+    margin-top: 9px;
+}
+
+/* STUDENT PROGRESS */
+.progress-panel {
+    margin-top: 16px;
+    overflow: hidden;
+}
+
+.panel h2 {
+    color: #7d2012;
+    font-size: 18px;
+    margin: 0 0 15px;
+}
+
+.progress-note {
+    margin: -7px 0 12px;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.progress-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 680px;
+}
+
+.progress-table th {
+    padding: 10px;
+    text-align: left;
+    background: #eaf1fa;
+}
+
+.progress-table td {
+    padding: 10px;
+    border-top: 1px solid #dce3ed;
+}
+
+.student-name {
+    color: #173d70;
+    font-weight: 700;
+}
+
+.muted {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* PROGRESS BARS */
+.progress-cell {
+    min-width: 150px;
+}
+
+.progress-track {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+}
+
+.assignment-fill {
+    background: #7d2012;
+}
+
+.attendance-fill {
+    background: #1b7a45;
+}
+
+.empty-row {
+    padding: 14px;
+}
+
+/* QUICK ACTIONS */
+.quick {
+    margin: 22px 0 18px;
+}
+
+.section-title {
+    font-size: 18px;
+    margin: 0 0 17px;
+    color: #173d70;
+}
+
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.quick-grid a {
+    display: block;
+    background: #fff;
+    border: 1px solid #dce3ed;
+    border-radius: 9px;
+    padding: 12px;
+    color: #173d70;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.quick-grid a:hover {
+    border-color: #7d2012;
+    color: #7d2012;
+}
+
+/* TABLET */
+@media (max-width: 1000px) {
+
+    .sidebar {
+        width: 210px;
+        flex-basis: 210px;
+    }
+
+    .quick-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* MOBILE */
+@media (max-width: 650px) {
+
+    .layout {
+        display: block;
+    }
+
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+        padding: 14px;
+    }
+
+    .brand {
+        padding-bottom: 12px;
+    }
+
+    .nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 3px;
+    }
+
+    .nav a {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .main {
+        padding: 18px 13px;
+    }
+
+    .topbar {
+        align-items: flex-start;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}

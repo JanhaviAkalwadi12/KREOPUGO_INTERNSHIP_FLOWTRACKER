@@ -1,14 +1,3 @@
 {
-  "version": 2,
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/index"
-    }
-  ],
-  "functions": {
-    "api/index.py": {
-      "includeFiles": "{templates/**,static/**,student_uploads/**,kreopugo_signup.db,.kreopugo_session_key}"
-    }
-  }
+  "version": 2
 }
